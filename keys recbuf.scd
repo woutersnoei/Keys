@@ -30,6 +30,10 @@ SynthDef( "keys_recbuf_3", { |t_trig = 0, in = 0|
 	};
 };
 
+~keys.recbuf.active = { |evt|
+	 evt.sn.notNil and: { evt.sn.isRunning.not }
+};
+
 ~keys.recbuf.end = { |evt|
 	evt.sn.free; evt.sn = nil;
 };

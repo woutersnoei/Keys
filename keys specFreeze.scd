@@ -45,7 +45,7 @@
 	if( evt.sn.isNil or: { evt.sn.isRunning.not }) {
 		evt.sn = Synth( "keys_specFreeze", evt.getPairs(
 			#[ amp, noiseLevel, active, lowcut, hicut, shift1, shift2, pitch, modlowcut, pitchtime ]
-		) ++ [ \bufnum, ~keys.fastBuffer ] ).register;
+		) ++ [ \bufnum, ~keys.recFast.buffer ] ).register;
 	};
 };
 
@@ -53,8 +53,6 @@
 	evt.sn.release;
 	evt.sn = nil;
 };
-
-~keys.fastBuffer = Buffer.read(s,"/Users/woutersnoei/Dropbox/Work/pow/goska_fast.aif");
 
 (
 SynthDef( "keys_specFreeze", { |t_trig = 0, noiseLevel = 0.75, active = 1, lowcut = 300, hicut = 20000, 

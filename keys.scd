@@ -13,6 +13,7 @@
 	reverb,
 	states,
 	
+	recFast,
 	binScramble, 
 	fastFreeze, 
 	keyLoop, 
