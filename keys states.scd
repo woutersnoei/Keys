@@ -167,16 +167,13 @@
 	nextFunc = ActionFunc( \wait, { |val = 1| ~keys.nextState(val); }, 0.15 );
 	
 	~keys.window.view.keyDownAction = { |doc, char, mod, ascii|
-		//ascii.postln;
 		if( char == $ ) { 
 			nextFunc.value(1);
-			//~keys.currentState.postln;
 		};
 		switch( ascii,
-			63234, { nextFunc.value(-1); ~keys.currentState.postln; }, // arrow left
-			63235, { nextFunc.value(1); ~keys.currentState.postln; }, // arrow right
-			127, { ~keys.setState(0); ~keys.currentState.postln; } // backspace 
-			//48, { ~keys.setState(0); ~keys.currentState.postln; }, // 0 (zero)
+			63234, { nextFunc.value(-1); }, // arrow left
+			63235, { nextFunc.value(1); }, // arrow right
+			127, { ~keys.setState(0); } // backspace 
 		);
 		~keys.keyDownAction( char, mod, ascii );		
 	};
