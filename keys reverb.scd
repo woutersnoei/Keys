@@ -14,9 +14,9 @@ q.verb.font = Font( Font.defaultSansFace, 10 );
 q.verb.active = 0;
 q.verb.n = 2; // number of channels
 q.verb.fftsize= 2048; 
-q.verb.amp = 0.33;
+q.verb.amp = 0.1;
 q.verb.preDelay = 0;
-q.verb.dur = 1.3;
+q.verb.dur = 1.0;
 q.verb.private = false;
 
 q.verb.offset = 22; // eucon slider
