@@ -163,20 +163,22 @@
 	evt.keygate.start;
 	evt.keyamp.start;
 	evt.recbuf.start;
-	evt.looprec.start;
+	//evt.looprec.start;
 };
 
 ~keys.end = { |evt|
 	evt.keygate.end;
 	evt.keyamp.end;
 	evt.recbuf.end;
-	evt.looprec.end;
+	//evt.looprec.end;
 };
 
 ~keys.keyDownAction; // <- put actions in here
 
+(
 ~keys.makeWindow = { |evt|
 	var ctrl, views, nextFunc;
+	var viewNames;
 	
 	~keys.window = Window("KEYS main window", Rect(300, 50, 400, 400)).front;
 	
@@ -204,8 +206,8 @@
 		.canFocus_( false )
 		.action_({ |bt|
 			switch( bt.value.asInt,
-				1, { ~keys.start },
-				0, { ~keys.end }
+				1, { ~keys.start; ~keys.changed( \currentState ); },
+				0, { ~keys.end; ~keys.changed( \currentState ); }
 			);
 		});
 	
@@ -216,12 +218,10 @@
 			~keys.setState( nb.value );
 			nb.focus( false );
 		});
-		
-	views[ \status ] = StaticText(~keys.window, 400@40 );
 	
 	views[ \amps ] = ();
 	
-	#[
+	viewNames = #[
 		keyamp, 
 		keyTexture,
 		noise1, noise2, noise3,
@@ -231,7 +231,9 @@
 		binScramble,
 		fastFreeze,
 		keyLoop
-	].do({ |item|
+	];
+	
+	viewNames.do({ |item|
 		var name, ctrl;
 		if( item.size > 0 ) {
 			name = item[0];
@@ -252,22 +254,39 @@
 			
 		views[ \amps ][ name ].view.onClose_({ ctrl.remove });
 	});
+	
+	StaticText( ~keys.window, 390@60 )
+		.string_(
+			"space bar: next cue, backspace: to start, arrow keys: cues fwd/bwd\n\n" ++
+			" ** this window must be in front during the performance **"
+		);
 
+	views[ \upd ] = { |evt|
+		var names;
+		names = (~keys.states[ ~keys.currentState ? 0 ].collect(_[0]) ? []);
+		if( ~keys.keyamp.active == true ) { names = names.add( \keyamp ) };
+		{
+			viewNames.do({ |viewName|
+				if( names.includes( viewName ) ) {
+					views[ \amps ][ viewName ].labelView.background_( Color.green.alpha_(0.75) );
+				} {
+					views[ \amps ][ viewName ].labelView.background_( Color.clear );
+				};
+			});
+		}.defer;
+	};
 	
 	ctrl = SimpleController( ~keys )
 		.put( \currentState, { 
 			views[ \currentState ].value = ~keys.currentState ? 0;
-			{ 	views[ \status ].string = "active: %".format( 
-					(~keys.states[ ~keys.currentState ? 0 ].collect(_[0]) ? []).join( ", " )
-				); 
-			}.defer;
+			views.upd;
 		});
 		
 	~keys.views = views;
 	~keys.changed( \currentState );
 	~keys.window.onClose_( { ctrl.remove; } );
 };
-
+);
 
 ~keys.makeWindow;
 
