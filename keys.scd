@@ -22,7 +22,9 @@
 	player, 
 	specFreeze,
 	
-	states
+	states,
+	
+	// midi   // <- uncomment for midi support
 	
 ].collect({ |item| 
 	var path;
