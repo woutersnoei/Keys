@@ -104,7 +104,7 @@ q.verb.start = { |evt|  // doesn't check if already started !!
  		 		\bufs, evt.irspectrum,
  		 		\fftsize, evt.fftsize,
  		 		\private, evt.private.binaryValue
- 			 ], addAction: \addToTail );
+ 			 ], addAction: \addAfter );
 	};
 
 q.verb.end = { |evt|
