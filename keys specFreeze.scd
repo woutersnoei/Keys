@@ -14,8 +14,11 @@
 ~keys.specFreeze.pitch = #[3,-4];
 ~keys.specFreeze.modlowcut = 100;
 ~keys.specFreeze.pitchtime = 1;
+~keys.specFreeze.lowtime = 30;
+~keys.specFreeze.hitime = 21;
 
-#[ amp, noiseLevel, active, lowcut, hicut, shift1, shift2, pitch, modlowcut, pitchtime ].do({ |item|
+#[ amp, noiseLevel, active, lowcut, hicut, shift1, shift2, pitch,
+	modlowcut, pitchtime, lowtime, hitime ].do({ |item|
 	~keys.specFreeze[ item.asSetter ] = { |evt, value|
 		if( value.notNil ) {
 			evt[ item ] = value;
@@ -30,6 +33,8 @@
 	if( value == 1 ) {
 		evt.hicut = 50;
 		evt.modlowcut = 20000;
+		evt.hitime = 21;
+		evt.lowtime = 30;
 		evt.filterTask = Task({
 			25.wait;
 			evt.end;
@@ -37,6 +42,8 @@
 	} {
 		evt.hicut = 20000;
 		evt.modlowcut = 100;
+		evt.hitime = 0.25;
+		evt.lowtime = 0.25;
 	};
 };
 
@@ -44,7 +51,8 @@
 	if( clear ) { evt.end };
 	if( evt.sn.isNil or: { evt.sn.isRunning.not }) {
 		evt.sn = Synth( "keys_specFreeze", evt.getPairs(
-			#[ amp, noiseLevel, active, lowcut, hicut, shift1, shift2, pitch, modlowcut, pitchtime ]
+			#[ amp, noiseLevel, active, lowcut, hicut, shift1, shift2, pitch,
+	modlowcut, pitchtime, lowtime, hitime ]
 		) ++ [ \bufnum, ~keys.recFast.buffer ] ).register;
 	};
 };
@@ -55,12 +63,13 @@
 };
 
 (
-SynthDef( "keys_specFreeze", { |t_trig = 0, noiseLevel = 0.75, active = 1, lowcut = 300, hicut = 20000, 
+SynthDef( "keys_specFreeze", { |t_trig = 0, noiseLevel = 0.75, active = 1, lowcut = 300, 
+		hicut = 20000, 
 		shift1 = 0, shift2 = 0, 
 		pitch = #[6,-7], 
 		pitchtime = 1, gran = 0, 
 		modlowcut = 100, amp = 0.1, gate = 1,
-		bufnum = 0|
+		bufnum = 0, lowtime = 30, hitime = 21|
 	var sig, fft, fft2, chain2;
 	var n = 2, lag = 1, index, nsig, modsig, modnoise;
 	var fftsize = 2048;
@@ -80,8 +89,8 @@ SynthDef( "keys_specFreeze", { |t_trig = 0, noiseLevel = 0.75, active = 1, lowcu
 		1, Rand( 0.dup(nx), BufFrames.kr( bufnum ) ),
 		loop: true) * 1.5);
 	//modsig = modsig * LFDNoise3.kr(0.2).max(0);
-	modlow = VarLag.kr( modlowcut.explin(20,20000,0,1), 30 ).linexp(0,1,20,20000, \minmax);
-	modhi = VarLag.kr(  hicut.explin(20,20000,0,1), 21 ).linexp(0,1,20,20000, \minmax);
+	modlow = VarLag.kr( modlowcut.explin(20,20000,0,1), lowtime ).linexp(0,1,20,20000, \minmax);
+	modhi = VarLag.kr(  hicut.explin(20,20000,0,1), hitime ).linexp(0,1,20,20000, \minmax);
 	
 	modsig = BLowCut.ar( modsig, LFDNoise3.kr(0.4.dup(nx)).exprange( modlow, 20000 ), 4);
 	modsig = BHiCut.ar( modsig, LFDNoise3.kr(0.4.dup(nx)).exprange( modlow, 20000), 4);
