@@ -10,12 +10,14 @@
 	inputRouter,
 	gate, 
 	recbuf, 
+	looprec,
 	reverb,
 	states,
 	
 	recFast,
 	binScramble, 
 	fastFreeze, 
+	loops,
 	keyLoop, 
 	keyTexture, 
 	noise, 
@@ -35,4 +37,7 @@
 
 
 Document.open( ~keys.docs[ \gate ] ); // quick link to doc
+
+"open '%'".format(~keys.path).unixCmd; // open folder in finder
+
 */
