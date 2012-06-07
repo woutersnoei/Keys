@@ -6,13 +6,11 @@
 ~keys.docs = ();
 
 #[
-
 	inputRouter,
 	gate, 
 	recbuf, 
 	looprec,
 	reverb,
-	states,
 	
 	recFast,
 	binScramble, 
@@ -22,7 +20,9 @@
 	keyTexture, 
 	noise, 
 	player, 
-	specFreeze
+	specFreeze,
+	
+	states
 	
 ].collect({ |item| 
 	var path;

@@ -176,7 +176,7 @@
 ~keys.keyDownAction; // <- put actions in here
 
 ~keys.makeWindow = { |evt|
-	var ctrl, ctrl2, views, nextFunc;
+	var ctrl, views, nextFunc;
 	
 	~keys.window = Window("KEYS main window", Rect(300, 50, 400, 400)).front;
 	
@@ -217,15 +217,42 @@
 			nb.focus( false );
 		});
 		
-	views[ \amp ] = EZSmoothSlider( ~keys.window, 250@20, "amp", \amp )
-		.value_( ~keys.keyamp !? { ~keys.keyamp.amp } ? 0.1 )
-		.action_({ |sl|
-			~keys.keyamp.amp = sl.value;
-		});
-		
-	views[ \amp ].sliderView.canFocus_( false );
-		
 	views[ \status ] = StaticText(~keys.window, 400@40 );
+	
+	views[ \amps ] = ();
+	
+	#[
+		keyamp, 
+		keyTexture,
+		noise1, noise2, noise3,
+		loop1, loop2, loop3,
+		specFreeze,
+		player,
+		binScramble,
+		fastFreeze,
+		keyLoop
+	].do({ |item|
+		var name, ctrl;
+		if( item.size > 0 ) {
+			name = item[0];
+		} {
+			name = item;
+		};
+		views[ \amps ][ name ] = EZSmoothSlider( ~keys.window, 380@16, name, \amp )
+				.labelWidth_( 70 )
+				.value_( ~keys[ name ].amp )
+				.action_({ |sl|
+					~keys[ name ].amp = sl.value;
+				});
+		views[ \amps ][ name ].sliderView.canFocus_(false);
+		views[ \amps ][ name ].numberView.canFocus_(false);
+		
+		ctrl = SimpleController( ~keys[ name ] )
+			.put( \amp, { views[ \amps ][ name ].value = ~keys[ name ].amp });
+			
+		views[ \amps ][ name ].view.onClose_({ ctrl.remove });
+	});
+
 	
 	ctrl = SimpleController( ~keys )
 		.put( \currentState, { 
@@ -235,17 +262,10 @@
 				); 
 			}.defer;
 		});
-	
-	if( ~keys.keyamp.notNil ) {
-		ctrl2 = SimpleController( ~keys.keyamp )
-			.put( \amp, { 
-				views[ \amp ].value = ~keys.keyamp.amp;	
-			});
-	};
 		
 	~keys.views = views;
 	~keys.changed( \currentState );
-	~keys.window.onClose_( { ctrl.remove; ctrl2.remove; } );
+	~keys.window.onClose_( { ctrl.remove; } );
 };
 
 
