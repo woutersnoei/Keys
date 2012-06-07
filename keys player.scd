@@ -5,6 +5,8 @@
 
 ~keys.player.synths = Order();
 
+~keys.player.amp = 0.1;
+
 ~keys.player.createDict = { |evt|
 	var offset;
 	evt.dict = ();
@@ -24,7 +26,7 @@
 		~keys.player.synths[ nn ] = 
 			Synth( [ "keys_fm", "keys_fm_long" ].wchoose([0.8,0.2]), [ 
 				\seed, nn ,
-				\amp, 0.1,
+				\amp, evt.amp,
 				 \sustain, 0.125 exprand: 0.5,
 				//\repeat, [0, 4.0 exprand: 10].choose
 			] ).freeAction_({ |synth|
