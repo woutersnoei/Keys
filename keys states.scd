@@ -14,7 +14,8 @@
 	[5,  [ [ \noise1, state: 0, attack: 0 ] ] ],
 	[6,  [ \noise1, [ \noise2, state: 0, attack: 0  ] ] ],
 	[7,  [ \noise1, \noise2, [ \noise3, state: 0, attack: 0 ] ] ],
-	[8,  [ [ \noise1, state: 1, attack: 6 ], [ \noise2, state: 1, attack: 6 ], [ \noise3, state: 1, attack: 6 ] ] ],
+	[8,  [ [ \noise1, state: 1, attack: 6 ], [ \noise2, state: 1, attack: 6 ], 
+			[ \noise3, state: 1, attack: 6 ] ] ],
 	[9,  [ \loop1 ] ],
 	[10, [ \loop1, \loop2 ] ],
 	[11, [ \loop1, \loop2, \loop3 ] ],
@@ -84,7 +85,6 @@
 });
 );
 
-
 ~keys.getStartAndEndItems = { |evt, index = 0|
 	// returns:
 	// [ [ items to start/continue ], [ items to end ] ]
@@ -135,7 +135,7 @@
 	evt.currentState;
 };
 
-
+// time to next (pseudo effect)
 ~keys.timeToNext = ~keys.timeToNext ? EM();
 
 ~keys.timeToNext.time = 50;
@@ -157,10 +157,26 @@
 	evt.task.stop;
 };
 
+// start and stop recording functions
+
+~keys.start = { |evt|
+	evt.keygate.start;
+	evt.keyamp.start;
+	evt.recbuf.start;
+	evt.looprec.start;
+};
+
+~keys.end = { |evt|
+	evt.keygate.end;
+	evt.keyamp.end;
+	evt.recbuf.end;
+	evt.looprec.end;
+};
+
 ~keys.keyDownAction; // <- put actions in here
 
 ~keys.makeWindow = { |evt|
-	var ctrl, views, nextFunc;
+	var ctrl, ctrl2, views, nextFunc;
 	
 	~keys.window = Window("KEYS main window", Rect(300, 50, 400, 400)).front;
 	
@@ -182,13 +198,32 @@
 	
 	~keys.window.addFlowLayout;
 	
+	views[ \power ] = SmoothButton( ~keys.window, 40@40 )
+		.label_([ 'power', 'power' ])
+		.hiliteColor_( Color.green )
+		.canFocus_( false )
+		.action_({ |bt|
+			switch( bt.value.asInt,
+				1, { ~keys.start },
+				0, { ~keys.end }
+			);
+		});
 	
-	views[ \currentState ] = SmoothNumberBox(~keys.window, 100@40 )
+	views[ \currentState ] = SmoothNumberBox(~keys.window, 70@40 )
 		.autoScale_( true )
+		.allowedChars_("")
 		.action_({ |nb|
 			~keys.setState( nb.value );
 			nb.focus( false );
 		});
+		
+	views[ \amp ] = EZSmoothSlider( ~keys.window, 250@20, "amp", \amp )
+		.value_( ~keys.keyamp !? { ~keys.keyamp.amp } ? 0.1 )
+		.action_({ |sl|
+			~keys.keyamp.amp = sl.value;
+		});
+		
+	views[ \amp ].sliderView.canFocus_( false );
 		
 	views[ \status ] = StaticText(~keys.window, 400@40 );
 	
@@ -200,10 +235,17 @@
 				); 
 			}.defer;
 		});
+	
+	if( ~keys.keyamp.notNil ) {
+		ctrl2 = SimpleController( ~keys.keyamp )
+			.put( \amp, { 
+				views[ \amp ].value = ~keys.keyamp.amp;	
+			});
+	};
 		
 	~keys.views = views;
 	~keys.changed( \currentState );
-	~keys.window.onClose_( { ctrl.remove; } );
+	~keys.window.onClose_( { ctrl.remove; ctrl2.remove; } );
 };
 
 
