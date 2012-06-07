@@ -26,7 +26,7 @@
 		~keys.player.synths[ nn ] = 
 			Synth( [ "keys_fm", "keys_fm_long" ].wchoose([0.8,0.2]), [ 
 				\seed, nn ,
-				\amp, evt.amp,
+				\amp, ~keys.player.amp,
 				 \sustain, 0.125 exprand: 0.5,
 				//\repeat, [0, 4.0 exprand: 10].choose
 			] ).freeAction_({ |synth|

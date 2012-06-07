@@ -77,7 +77,7 @@ SynthDef( "keys_specFreeze", { |t_trig = 0, noiseLevel = 0.75, active = 1, lowcu
 	var nx = 6;
 	var modlow, modhi;
 	//sig = PlayBuf.ar(1, ~bufHigh, loop:1);
-	sig = PrivateIn.ar(2) * Env([1,1,1],[0.1,0.1]).kr;
+	sig = PrivateIn.ar(1) * Env([1,1,1],[0.1,0.1]).kr;
 	fft = FFT( LocalBuf(fftsize).clear, sig );
 	t_trig = Onsets.kr(fft, 0.7, \wphase) + t_trig;
 	t_trig = DelayN.kr( t_trig, 0.1, 0.1 );

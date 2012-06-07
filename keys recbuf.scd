@@ -7,9 +7,9 @@
 */
 
 (
-SynthDef( "keys_recbuf_3", { |t_trig = 0, in = 0|
+SynthDef( "keys_recbuf_2", { |t_trig = 0, in = 0|
 	var buffers, phasor;
-	var input, n = 3;
+	var input, n = 2;
 	buffers = \buffers.kr( 0!n );
 	phasor = Phasor.ar( 0, 1, 0, BufFrames.kr( buffers[0] ) );
 	input = PrivateIn.ar( in, n );
@@ -22,11 +22,11 @@ SynthDef( "keys_recbuf_3", { |t_trig = 0, in = 0|
 
 ~keys.recbuf = ~keys.recbuf ? EM();
 
-~keys.recbuf.bufs = { Buffer.alloc( s, 44100 * 20 ) }!3; // 5 20-second buffers
+~keys.recbuf.bufs = { Buffer.alloc( s, 44100 * 20 ) }!2; // 5 20-second buffers
 
 ~keys.recbuf.start = { |evt|
 	if( evt.sn.isNil or: { evt.sn.isRunning.not }) {
-		evt.sn = Synth( "keys_recbuf_3", [ \buffers, evt.bufs ], addAction: \addToTail ).register;
+		evt.sn = Synth( "keys_recbuf_2", [ \buffers, evt.bufs ], addAction: \addToTail ).register;
 	};
 };
 

@@ -56,7 +56,7 @@ SynthDef( "keys_fastFreeze", { |amp = 0.1, active = 1, spd = 5, modrange = 0, ga
 	var env;
 	modrange = modrange.lag(25).clip(0,1);
 	spd = spd.lag(30);
-	sig = PrivateIn.ar(2) * active;
+	sig = PrivateIn.ar(1) * active;
 		
 	modsig = PinkNoise.ar(1.dup);
 	modsig = (modsig * (1-(modrange.sqrt))) + ( Splay.ar( 

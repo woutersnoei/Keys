@@ -45,6 +45,8 @@ SynthDef("keys_amp", { |in = 0, out = 0, amp = 0.1, gate = 1|
 	evt.sn = Synth( "keys_amp", [ \amp, evt.amp ], addAction: \addToTail );
 };
 
+~keys.keyamp.active = { |evt| evt.sn.notNil };
+
 ~keys.keyamp.end = { |evt, time|
 	evt.sn.release(time);
 	evt.sn = nil;

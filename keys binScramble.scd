@@ -30,7 +30,7 @@ SynthDef("keys_binScramble", { arg t_trig = 0, thresh = 5, amp = 0.1,
 		gate = 1;
 Ê Ê Ê Ê var in, chain, noiseChains, chain2;
 	   var sig, noise, fftsize = 4096;
-	   in = PrivateIn.ar(2);
+	   in = PrivateIn.ar(1);
 	   in = DelayC.ar( in, 2.0, LFDNoise3.kr(0.125).range(0.5,2) );
 	   chain = FFT(LocalBuf(fftsize), in);
 	   noise = WhiteNoise.ar(0.1.dup);

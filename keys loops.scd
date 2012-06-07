@@ -21,7 +21,7 @@
 	~keys.loop1[ item.asSetter ] = { |evt, value|
 		if( value.notNil ) {
 			evt[ item ] = value;
-			evt.sn.set( item, value );
+			evt.synths.do(_.set( item, value ));
 		};
 	};
 });
@@ -32,7 +32,7 @@
 		//~keys.looprec.recbuffer(evt.buf); 
 		evt.task = Task({
 			0.56.wait;
-			~keys.recbuf.catch( evt.buf, 2, { "recorded buf".postln }, 0 );
+			~keys.recbuf.catch( evt.buf, 1, { "recorded buf".postln }, 0 );
 			evt.settings.do({ |setting, i|
 				var time, semitones, pan;
 				#time, semitones, pan = setting;

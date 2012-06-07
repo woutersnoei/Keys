@@ -5,7 +5,7 @@
 
 ~keys.looprec.buf = 0;
 ~keys.looprec.delay = 0;
-~keys.looprec.in = 2;
+~keys.looprec.in = 1;
 
 #[ buf, delay, in ].do({ |item|
 	~keys.looprec[ item.asSetter ] = { |evt, value|
@@ -42,7 +42,7 @@
 };
 
 (
-SynthDef( "keys_looprec", { |buf = 0, t_trig = 0, delay = 0.1, in = 2|
+SynthDef( "keys_looprec", { |buf = 0, t_trig = 0, delay = 0.1, in = 1|
 	var sig, run;
 	sig = PrivateIn.ar( in );
 	run = Trig.kr( t_trig, BufDur.kr( buf ));

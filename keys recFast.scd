@@ -14,7 +14,7 @@
 		"~keys.recFast : buffer recording started".postln;
 		evt.task = Task({ 
 			6.wait;
-			~keys.recbuf.catch( evt.buffer, 2, 
+			~keys.recbuf.catch( evt.buffer, 1, 
 				{ "~keys.recFast : buffer recording done".postln; }
 			);
 		}).start;
