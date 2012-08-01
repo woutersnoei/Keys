@@ -24,7 +24,7 @@
 	
 	states,
 	
-	// midi   // <- uncomment for midi support
+	midi   // <- uncomment for midi support
 	
 ].collect({ |item| 
 	var path;
