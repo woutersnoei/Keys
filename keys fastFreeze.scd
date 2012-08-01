@@ -4,9 +4,9 @@
 
 ~keys.fastFreeze = ~keys.fastFreeze ? EM();
 
-~keys.fastFreeze.amp = 0.1;
+~keys.fastFreeze.amp = 0.2;
 ~keys.fastFreeze.active = 1;
-~keys.fastFreeze.spd = 5;
+~keys.fastFreeze.spd = 2;
 ~keys.fastFreeze.modrange = 0;
 
 ~keys.fastFreeze.setting = 0;
