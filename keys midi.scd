@@ -35,6 +35,19 @@ MIDIWindow(true);
 		evt[ item[0] ].amp = evt.midiSpec.map( val/127 );
 	});
 };
+
+~keys.ccRange = [inf,0];
+~keys.midiMap.do({ |item|
+	~keys.ccRange =[ ~keys.ccRange[0].min(item[1]), ~keys.ccRange[1].max(item[1]) ];
+});
+
+~keys.midiMap.do({ |item|
+	~keys.views.amps[ item[0] ].sliderView.string = "ch %,   cc %".format( item[2], item[1] );
+	~keys.views.amps[ item[0] ].sliderView.hiliteColor = Gradient( Color.gray(0.9).alpha_(0.5), Color.gray(0.5).alpha_(0.5), \h ) ;
+	~keys.views.amps[ item[0] ].sliderView.background = Color.hsv( item[1].linlin(  *(~keys.ccRange ++ [0,1]) ), 0.7, 0.9).alpha_(0.6);
+});
+
+
 )
 
 /*
