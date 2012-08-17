@@ -6,6 +6,7 @@
 ~keys.player.synths = Order();
 
 ~keys.player.amp = 0.1;
+~keys.player.spread = PintC( Pwhite( 0.0, 1.0), 0.01 ).linexp(0,1,0.5,4).asStream;
 
 ~keys.player.createDict = { |evt|
 	var offset;
@@ -28,6 +29,7 @@
 				\seed, nn ,
 				\amp, ~keys.player.amp,
 				 \sustain, 0.125 exprand: 0.5,
+				 \spread, ~keys.player.spread.next
 				//\repeat, [0, 4.0 exprand: 10].choose
 			] ).freeAction_({ |synth|
 			~keys.player.synths.remove( synth );
@@ -55,46 +57,65 @@
 ~keys.player.seed = 1000.rand;
 
 (
-SynthDef( "keys_fm", { |sustain = 0.2, seed = 0, amp = 0.1|
+SynthDef( "keys_fm", { |sustain = 0.2, seed = 0, amp = 0.1, spread = 1|
 	var levels, n = 4, phases;
-	var sig;
+	var sig, freqs, ranges, decays, pan;
 	RandID.ir(2);
 	phases = Rand(-pi.dup(n), pi);
      RandID.ir(1);
 	RandSeed.ir( 1, seed + ~keys.player.seed ); // make it sound different on different machines
 	levels = ExpRand(0.1.dup(n),1);
 	levels = levels / levels.sum;
+	freqs = SortedRand.ir( n, 200, 7000, \exp, spread );
+	#ranges, decays = n.collect({ [ 
+			[ ExpRand(200,7000), ExpRand(200,7000) ],
+			ExpRand(0.25,1)
+		]
+	}).flop;
+	pan = Rand(-0.5,0.5);
 	Line.kr(0,1,sustain, doneAction:2);
 	sig =  n.collect({ |i|
 		SinOsc.ar( 
-			SinOsc.ar( ExpRand(200,7000) )
-				.range( ExpRand(200,7000), ExpRand(200,7000) ),
-			phases[i], levels[i]
-		 ) *( Env.perc(0.001,sustain * ExpRand(0.25,1)).ar )
+			SinOsc.ar(freqs[i]).range( *ranges[i] ), 
+			phases[i], 
+			levels[i] 
+		) *( Env.perc(0.001,sustain * ExpRand(0.25,1)).ar )
 	}).sum * 0.25;
-	Out.ar( 0, Pan2.ar( sig, Rand(-0.5,0.5) ) * amp );
+	Out.ar( 0, Pan2.ar( sig, pan ) * amp );
 }).load(s);
 );
 
 (
-SynthDef( "keys_fm_long", { |sustain = 0.2, seed = 0, amp = 0.1, gate = 1|
+SynthDef( "keys_fm_long", { |sustain = 0.2, seed = 0, amp = 0.1, gate = 1, spread = 1|
 	var levels, n = 4, phases;
-	var sig;
+	var sig, freqs, ranges, decays, pan;
 	RandID.ir(2);
 	phases = Rand(-pi.dup(n), pi);
      RandID.ir(1);
 	RandSeed.ir( 1, seed + ~keys.player.seed ); // make it sound different on different machines
 	levels = ExpRand(0.1.dup(n),1);
 	levels = levels / levels.sum;
+	freqs = SortedRand.ir( n, 200, 7000, \exp, spread );
+	#ranges, decays = n.collect({ [ 
+			[ ExpRand(200,7000), ExpRand(200,7000) ],
+			ExpRand(0.25,1)
+		]
+	}).flop;	pan = Rand(-0.5,0.5);
+	RandID.ir(2);
+	levels = levels * SinOsc.kr( ExpRand(0.05.dup(n),0.7), 0.5pi ).range(0,1);
 	sig =  n.collect({ |i|
 		SinOsc.ar( 
 			SinOsc.ar( ExpRand(200,7000) )
 				.range( ExpRand(200,7000), ExpRand(200,7000) ),
 			phases[i], levels[i]
 		 ) *( Env.perc(0.001,sustain * ExpRand(0.25,1)).ar + 0.075)
+			SinOsc.ar(freqs[i]).range( *ranges[i] ), 
+			phases[i], 
+			levels[i] 
+		) * (Env.perc(0.001,sustain * decays[i]).ar + 0.075)
 	}).sum * 0.25;
 	sig = sig * Env.cutoff.kr(2,gate.max( Impulse.kr(1) ));
-	Out.ar( 0, Pan2.ar( sig, Rand(-0.5,0.5) ) * amp );
+	Out.ar( 0, Pan2.ar( sig, pan ) * amp );
 }).load(s);
 )
 
