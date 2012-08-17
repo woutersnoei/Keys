@@ -10,19 +10,19 @@ MIDIWindow(true);
 
 (
 ~keys.midiMap = [
-	[ \keyamp, 10, 0 ], // pan ch 1
-	[ \keyTexture, 7, 0 ], // volume ch 1-8
-	[ \noise1, 7, 1 ],
-	[ \noise2, 7, 1 ],
-	[ \noise3, 7, 1 ],
-	[ \loop1, 7, 2 ],
-	[ \loop2, 7, 2 ],
-	[ \loop3, 7, 2 ],
-	[ \specFreeze, 7, 3 ],
-	[ \player, 7, 4 ],
-	[ \binScramble, 7, 5 ],
-	[ \fastFreeze, 7, 6 ],
-	[ \keyLoop, 7, 7 ],
+	[ \keyamp, 9, 1 ], // pan ch 1
+	[ \keyTexture, 1, 1 ], // volume ch 1-8
+	[ \noise1, 2, 1 ],
+	[ \noise2, 2, 1 ],
+	[ \noise3, 2, 1 ],
+	[ \loop1, 3, 1 ],
+	[ \loop2, 3, 1 ],
+	[ \loop3, 3, 1 ],
+	[ \specFreeze, 4, 1 ],
+	[ \player, 5, 1 ],
+	[ \binScramble, 6, 1 ],
+	[ \fastFreeze, 7, 1 ],
+	[ \keyLoop, 8, 1 ],
 ];
 );
 		
