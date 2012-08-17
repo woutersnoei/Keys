@@ -105,10 +105,6 @@ SynthDef( "keys_fm_long", { |sustain = 0.2, seed = 0, amp = 0.1, gate = 1, sprea
 	levels = levels * SinOsc.kr( ExpRand(0.05.dup(n),0.7), 0.5pi ).range(0,1);
 	sig =  n.collect({ |i|
 		SinOsc.ar( 
-			SinOsc.ar( ExpRand(200,7000) )
-				.range( ExpRand(200,7000), ExpRand(200,7000) ),
-			phases[i], levels[i]
-		 ) *( Env.perc(0.001,sustain * ExpRand(0.25,1)).ar + 0.075)
 			SinOsc.ar(freqs[i]).range( *ranges[i] ), 
 			phases[i], 
 			levels[i] 
