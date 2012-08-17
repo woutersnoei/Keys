@@ -25,7 +25,7 @@
 	if( nn.notNil ) {
 		~keys.player.synths.do(_.release); 
 		~keys.player.synths[ nn ] = 
-			Synth( [ "keys_fm", "keys_fm_long" ].wchoose([0.8,0.2]), [ 
+			Synth( [ "keys_fm", "keys_fm_long" ].wchoose([0.75,0.25]), [ 
 				\seed, nn ,
 				\amp, ~keys.player.amp,
 				 \sustain, 0.125 exprand: 0.5,
