@@ -21,7 +21,7 @@
 
 ~keys.player.keyDownAction = { |evt, char, mod, ascii, key| 
 	var nn;
-	nn = ~keys.player.dict[ char ];
+	nn = ~keys.player.dict[ char.toLower ];
 	if( nn.notNil ) {
 		~keys.player.synths.do(_.release); 
 		~keys.player.synths[ nn ] = 

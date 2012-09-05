@@ -52,7 +52,7 @@
 
 ~keys.keyLoop.keyDownAction = { |vw, char|
 	var buf;
-	buf = ~keys.keyLoop.bufdict[ char ];
+	buf = ~keys.keyLoop.bufdict[ char.toLower ];
 	if( buf.notNil ) {
 		{ 	
 			0.16.wait; 
