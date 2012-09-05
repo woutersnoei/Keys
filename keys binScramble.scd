@@ -6,6 +6,10 @@
 ~keys.binScramble.thresh = 5;
 ~keys.binScramble.amp = 0.1;
 
+~keys.binScramble.mute = { |evt|
+	evt.sn.set( \t_mute, 1 );
+};
+
 [ \thresh, \amp ].do({ |item|
 	~keys.binScramble[ item.asSetter ] = { |evt, value|
 		if( value.notNil ) {
@@ -27,18 +31,20 @@
 
 (
 SynthDef("keys_binScramble", { arg t_trig = 0, thresh = 5, amp = 0.1, 
-		gate = 1;
+		gate = 1, t_mute = 0;
 Ê Ê Ê Ê var in, chain, noiseChains, chain2;
 	   var sig, noise, fftsize = 4096;
+	   var muteSig;
 	   in = PrivateIn.ar(1);
-	   in = DelayC.ar( in, 2.0, LFDNoise3.kr(0.125).range(0.5,2) );
+	   muteSig = 1-Trig.kr(t_mute, 2.1);
+	   in = DelayC.ar( in, 2.0, LFDNoise3.kr(0.125).range(0.5,2) ) * muteSig;
 	   chain = FFT(LocalBuf(fftsize), in);
 	   noise = WhiteNoise.ar(0.1.dup);
 
         noiseChains = noise.collect({ |nse| FFT(LocalBuf(fftsize), nse )});
         
 	   chain = PV_LocalMax(chain, thresh);
-	   chain = PV_MagSmooth( chain, 0.9 );
+	   chain = PV_MagSmooth( chain, (0.3 * muteSig) + 0.6 );
 	   chain = PV_BinScramble(chain, 1, 0.075, t_trig);
 	   chain2 = PV_Copy(chain, LocalBuf(fftsize).clear);
 	   

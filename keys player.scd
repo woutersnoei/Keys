@@ -35,6 +35,7 @@
 			~keys.player.synths.remove( synth );
 			});
 	} {
+		if( char == $\r ) { ~keys.binScramble.mute };
 		~keys.player.synths.do(_.release);
 		~keys.player.createDict;
 	};
