@@ -255,6 +255,31 @@
 		views[ \amps ][ name ].view.onClose_({ ctrl.remove });
 	});
 	
+	views[ \save ] = SmoothButton( ~keys.window, 100@16 )
+		.label_( "save levels" )
+		.canFocus_( false )
+		.background_( Color.red.alpha_(0.25) )
+		.action_({
+			Dialog.savePanel({ |path|
+				var string;
+				path = path.replaceExtension( "scd" );
+				string = viewNames.collect({ |item|
+						"~keys.%.amp = %;".format( item, ~keys[ item ].amp );
+					}).join( "\n" );
+				File.use( path, "w", { |f| f.write(string) });
+			});
+		});
+		
+	views[ \open ] = SmoothButton( ~keys.window, 100@16 )
+		.label_( "read levels" )
+		.background_( Color.green.alpha_(0.25) )
+		.canFocus_( false )
+		.action_({
+			Dialog.openPanel({ |path|
+				path.load;
+			});
+		});
+	
 	StaticText( ~keys.window, 390@60 )
 		.string_(
 			"space bar: next cue, backspace: to start, arrow keys: cues fwd/bwd\n\n" ++
