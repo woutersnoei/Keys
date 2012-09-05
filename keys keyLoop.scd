@@ -79,7 +79,7 @@
 		}.fork;
 	} {
 		if( char == $\r ) {
-			~keys.endSynths_(true);
+			~keys.keyLoop.endSynths_(true);
 			[].postln;
 		};
 	};
