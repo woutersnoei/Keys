@@ -179,8 +179,9 @@
 ~keys.makeWindow = { |evt|
 	var ctrl, views, nextFunc;
 	var viewNames;
+	var threshCtrl;
 	
-	~keys.window = Window("KEYS main window", Rect(300, 50, 400, 400)).front;
+	~keys.window = Window("KEYS main window", Rect(300, 50, 430, 400)).front;
 	
 	nextFunc = ActionFunc( \wait, { |val = 1| ~keys.nextState(val); }, 0.15 );
 	
@@ -232,7 +233,7 @@
 		fastFreeze,
 		keyLoop
 	];
-	
+
 	viewNames.do({ |item|
 		var name, ctrl;
 		if( item.size > 0 ) {
@@ -255,6 +256,21 @@
 		views[ \amps ][ name ].view.onClose_({ ctrl.remove });
 	});
 	
+	views[ \keygate ] = EZSmoothSlider( ~keys.window, 380@16, "keygate", [ -90, -20, \lin, 1 ].asSpec )
+			.labelWidth_( 70 )
+			.value_( ~keys[ \keygate ].thresh )
+			.action_({ |sl|
+				~keys[ \keygate ].thresh = sl.value;
+			});
+			
+	views[ \keygate ].sliderView.canFocus_(false);
+	views[ \keygate ].numberView.canFocus_(false);
+	
+	threshCtrl = SimpleController( ~keys[ \keygate ] )
+		.put( \thresh, { views[ \keygate ].value = ~keys[ \keygate ].thresh });
+		
+	views[ \keygate ].view.onClose_({ threshCtrl.remove });
+	
 	views[ \save ] = SmoothButton( ~keys.window, 100@16 )
 		.label_( "save levels" )
 		.canFocus_( false )
@@ -266,6 +282,7 @@
 				string = viewNames.collect({ |item|
 						"~keys.%.amp = %;".format( item, ~keys[ item ].amp );
 					}).join( "\n" );
+				string = string ++ "\n~keys.keygate.thresh = %;".format( ~keys[ \keygate ].thresh ); 
 				File.use( path, "w", { |f| f.write(string) });
 			});
 		});

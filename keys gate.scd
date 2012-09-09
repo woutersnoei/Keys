@@ -19,10 +19,15 @@ SynthDef("keys_amp", { |in = 0, out = 0, amp = 0.1, gate = 1|
 	Out.ar(out, sig * 2 * amp.dup * Env.cutoff.kr(2,gate));
 }).load(s);
 
+~keys.keygate.thresh = -60;
+~keys.keygate.thresh_ = { |evt, thresh = -60|
+	evt[ \thresh ] = thresh;
+	evt.sn.set( \thresh, thresh );
+};
 
 ~keys.keygate.start = { |evt|
 	evt.end;
-	evt.sn = Synth( "keys_gate" );
+	evt.sn = Synth( "keys_gate", [ \thresh, evt.thresh ] );
 };
 
 ~keys.keygate.end = { |evt, time|
@@ -37,7 +42,6 @@ SynthDef("keys_amp", { |in = 0, out = 0, amp = 0.1, gate = 1|
 ~keys.keyamp.amp_ = { |evt, amp = 0.1|
 	evt[ \amp ] = amp;
 	evt.sn.set( \amp, amp );
-	evt.changed( \amp, amp );
 };
 
 ~keys.keyamp.start = { |evt|
