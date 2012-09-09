@@ -44,6 +44,8 @@
 
 ~keys.keyLoop.synthdict = ();
 
+~keys.keyLoop.active = false;
+
 ~keys.keyLoop.bufdict = ();
 
 "abcdefghijklmnopqrstuvwxyz1234567890".do({ |char|
@@ -55,6 +57,7 @@
 	buf = ~keys.keyLoop.bufdict[ char.toLower ];
 	if( buf.notNil ) {
 		{ 	
+			~keys.keyLoop.active = true;
 			0.16.wait; 
 			if( ~keys.keyLoop.synthdict[ char ].notNil ) {
 				~keys.fastFreeze.end;
@@ -62,19 +65,27 @@
 				~keys.keyLoop.synthdict[ char ] = nil;
 				~keys.keyLoop.synthdict.keys.asArray.sort.postln;
 			} {	
-				~keys.recbuf.catch( buf, 0, 
-					{ 
-						~keys.keyLoop.synthdict[ char ] = 
-							Synth( "keys_playkey_loop", [ 
-								\bufnum, buf,
-								\amp, ~keys.keyLoop.amp ? 0.1,
-								\speed, ~keys.keyLoop.speed ? 1,
-								\combamt, ~keys.keyLoop.combamt ? 0,
-								\combdecay, ~keys.keyLoop.combdecay ? 0.4
-							] );
-						~keys.keyLoop.synthdict.keys.asArray.sort.postln;
-					 }, 
-				0 ); 
+				if( ~keys.keyLoop.active == true ) {	
+					~keys.recbuf.catch( buf, 0, 
+						{ 
+							if( ~keys.keyLoop.active == true ) {
+								~keys.keyLoop.synthdict[ char ] = 
+									Synth( "keys_playkey_loop", [ 
+										\bufnum, buf,
+										\amp, ~keys.keyLoop.amp ? 0.1,
+										\speed, ~keys.keyLoop.speed ? 1,
+										\combamt, ~keys.keyLoop.combamt ? 0,
+										\combdecay, ~keys.keyLoop.combdecay ? 0.4
+									] );
+								~keys.keyLoop.synthdict.keys.asArray.sort.postln;
+							} {
+								"key '%' hit but immediately stopped\n".postf( char );
+							};
+						 }, 
+					0 );
+				} {
+					"key '%' hit but stopped before recording\n".postf( char );
+				};
 			};
 		}.fork;
 	} {
@@ -92,6 +103,7 @@
 
 ~keys.keyLoop.endSynths_ = { |evt, bool = true|
 	if( bool == true ) {
+		evt.active = false;
 		evt.synthdict.do(_.release);
 		evt.synthdict = ();
 	};
