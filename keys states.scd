@@ -175,6 +175,42 @@
 
 ~keys.keyDownAction; // <- put actions in here
 
+~keys.levelsPath = File.getcwd +/+ "keys levels.scd";
+
+~keys.viewNames = #[
+	keyamp, 
+	keyTexture,
+	noise1, noise2, noise3,
+	loop1, loop2, loop3,
+	specFreeze,
+	player,
+	binScramble,
+	fastFreeze,
+	keyLoop
+];
+
+~keys.readLevels = { |evt|
+	if( File.exists( evt.levelsPath ) ) {
+		evt.levelsPath.load;
+	} {
+		"~keys.readLevels: file not found".postln;
+	};
+};
+
+~keys.writeLevels = { |evt, path|
+	var string;
+	path = path ? evt.levelsPath;
+	path = path.replaceExtension( "scd" );
+	string = evt.viewNames.collect({ |item|
+		"~keys.%.amp = %;".format( item, ~keys[ item ].amp );
+	}).join( "\n" );
+	string = string ++ "\n~keys.keygate.thresh = %;".format( ~keys[ \keygate ].thresh ); 
+	File.use( path, "w", { |f| f.write(string) });
+	"~kets.writeLevels: writing levels to %\n".postf( path );
+};
+
+~keys.readLevels;
+
 (
 ~keys.makeWindow = { |evt|
 	var ctrl, views, nextFunc;
@@ -221,20 +257,8 @@
 		});
 	
 	views[ \amps ] = ();
-	
-	viewNames = #[
-		keyamp, 
-		keyTexture,
-		noise1, noise2, noise3,
-		loop1, loop2, loop3,
-		specFreeze,
-		player,
-		binScramble,
-		fastFreeze,
-		keyLoop
-	];
 
-	viewNames.do({ |item|
+	~keys.viewNames.do({ |item|
 		var name, ctrl;
 		if( item.size > 0 ) {
 			name = item[0];
@@ -275,27 +299,21 @@
 		.label_( "save levels" )
 		.canFocus_( false )
 		.background_( Color.red.alpha_(0.25) )
-		.action_({
-			Dialog.savePanel({ |path|
-				var string;
-				path = path.replaceExtension( "scd" );
-				string = viewNames.collect({ |item|
-						"~keys.%.amp = %;".format( item, ~keys[ item ].amp );
-					}).join( "\n" );
-				string = string ++ "\n~keys.keygate.thresh = %;".format( ~keys[ \keygate ].thresh ); 
-				File.use( path, "w", { |f| f.write(string) });
-			});
-		});
+		.action_({ ~keys.writeLevels });
 		
 	views[ \open ] = SmoothButton( ~keys.window, 100@16 )
 		.label_( "read levels" )
 		.background_( Color.green.alpha_(0.25) )
 		.canFocus_( false )
-		.action_({
-			Dialog.openPanel({ |path|
-				path.load;
-			});
+		.action_({ ~keys.readLevels; });
+		
+	views[ \show ] = SmoothButton( ~keys.window, 120@16 )
+		.label_( "show levels file" )
+		.canFocus_( false )
+		.action_({ 
+			~keys.levelsPath.revealInFinder 
 		});
+		
 	
 	StaticText( ~keys.window, 390@60 )
 		.string_(
@@ -308,7 +326,7 @@
 		names = (~keys.states[ ~keys.currentState ? 0 ].collect(_[0]) ? []);
 		if( ~keys.keyamp.active == true ) { names = names.add( \keyamp ) };
 		{
-			viewNames.do({ |viewName|
+			~keys.viewNames.do({ |viewName|
 				if( names.includes( viewName ) ) {
 					views[ \amps ][ viewName ].labelView.background_( Color.green.alpha_(0.75) );
 				} {
