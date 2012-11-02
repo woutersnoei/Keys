@@ -163,6 +163,7 @@
 	evt.keygate.start;
 	evt.keyamp.start;
 	evt.recbuf.start;
+	evt.changed( \started );
 	//evt.looprec.start;
 };
 
@@ -170,6 +171,7 @@
 	evt.keygate.end;
 	evt.keyamp.end;
 	evt.recbuf.end;
+	evt.changed( \ended );
 	//evt.looprec.end;
 };
 
@@ -340,7 +342,9 @@
 		.put( \currentState, { 
 			views[ \currentState ].value = ~keys.currentState ? 0;
 			views.upd;
-		});
+		})
+		.put( \started, { views[ \power ].value = 1 })
+		.put( \ended, { views[ \power ].value = 0 });
 		
 	~keys.views = views;
 	~keys.changed( \currentState );
