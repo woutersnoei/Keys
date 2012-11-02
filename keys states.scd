@@ -233,7 +233,7 @@
 	var viewNames;
 	var threshCtrl;
 	
-	~keys.window = Window("KEYS main window", Rect(300, 50, 430, 400)).front;
+	~keys.window = Window("KEYS main window", Rect(300, 130, 430, 400)).front;
 	
 	nextFunc = ActionFunc( \wait, { |val = 1| ~keys.nextState(val); }, 0.15 );
 	

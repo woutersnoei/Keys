@@ -121,7 +121,7 @@ q.verb.prepare;
 
 
 // window and views
-q.verb.w = Window( "verb", Rect(10, 263, 113, 84)).front;
+q.verb.w = Window( "verb", Rect(10, 370, 113, 84)).front;
 q.verb.w.addFlowLayout;
 q.verb.views = ();
 
