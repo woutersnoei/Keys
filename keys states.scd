@@ -175,6 +175,20 @@
 	//evt.looprec.end;
 };
 
+~keys.fullReset = { |evt|
+	var currentState;
+	currentState = evt.currentState ? 0;
+	evt.setState(0);
+	evt.end; evt.changed( \currentState );
+	{
+		0.1.wait; 
+		CmdPeriod.run; 
+		0.1.wait;
+		evt.start; 
+		evt.setState(currentState);
+	}.fork;
+};
+
 ~keys.keyDownAction; // <- put actions in here
 
 ~keys.levelsPath = File.getcwd +/+ "keys levels.scd";
@@ -257,6 +271,14 @@
 			~keys.setState( nb.value );
 			nb.focus( false );
 		});
+		
+	~keys.window.view.decorator.shift( 430 - (40 + 70 + 20 + 100 ), 0 );
+	
+	views[ \fullReset ] = SmoothButton( ~keys.window, 100@20 )
+		.label_( "full reset" )
+		.background_( Color.red.alpha_(0.5) )
+		.canFocus_( false )
+		.action_({ ~keys.fullReset; });
 	
 	views[ \amps ] = ();
 
