@@ -48,6 +48,8 @@ MIDIWindow(true);
 });
 
 
+~keys.window !? _.front;
+
 )
 
 /*
